@@ -24,6 +24,7 @@
 				}
 			}
             $( document ).ready(function(){
+				$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
                 window.Echo.join('monitoring.common')
                 .here((users) => {
 					console.log(users);
@@ -177,10 +178,6 @@
 									<span>Common</span>
 									<p>Messages</p>
 								</div>
-								<div class="video_cam">
-									<span><i class="fas fa-video"></i></span>
-									<span><i class="fas fa-phone"></i></span>
-								</div>
 							</div>
 							<span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
 							<div class="action_menu">
@@ -193,11 +190,20 @@
 							</div>
 						</div>
 						<div class="card-body msg_card_body" id="chatbox">
-
+						<?php
+						if($common_chat){
+							foreach($common_chat as $val){
+								$wheremy = ($val->id == $user->id) ? "start" : "end";
+								$ifmessage = ($val->id == $user->id) ? "msg_cotainer" : "msg_cotainer_send";
+								echo '<div class="d-flex justify-content-'.$wheremy.' mb-4"><div class="img_cont_msg"><img src="'.$val->profile_src.'" class="rounded-circle user_img_msg"></div><div class="'.$ifmessage.'">'.$val->content.'<span class="msg_time">'.$val->regDate.'</span></div></div>';
+							}
+						}
+						?>
 						</div>
 						<div class="card-footer">
 							<div class="input-group">
 								<div class="input-group-append">
+									<input type="file" style="display:none"/>
 									<span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
 								</div>
 								<textarea id="message" name="" class="form-control type_msg" placeholder="Type your message..." onkeyup="javascript:if(event.keyCode==13)go_broadcasting()"></textarea>

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Events\Hello;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,27 +21,23 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/', function () {
 	$user = Auth::user();
-	return view("broadcasting", array("user"=>$user));
+	$common_chat = DB::table('common_chats AS cc')->select("cc.id", "cc.content", "cc.regDate", "users.name", "users.profile_src")->join("users","cc.id", "users.id")->get();
+	return view("broadcasting", array("user"=>$user, "common_chat"=>$common_chat));
 })->middleware('auth');
 
 //Route::get('/test', [HomeController::class,'test']);
 
-Route::get('/noti', function (Request $request) {
-	$user = User::find(2);
-	$send_id = 3;
-	$message = "Hello";
-	return $user->notify(new privateWhisper($send_id, $message));
-})->middleware('auth');
-
-Route::post('/broadcast', function(){
+Route::post('/broadcast', function(Request $request){
 	$user = Auth::user();
+	DB::table('common_chats')->insert(array("id"=>Auth::id(),"content"=>$request->message));
 	broadcast(new \App\Events\Hello("common"));
 	return "";
 });
 
 Route::match(array('GET', 'POST'), '/broadcasting', function(){
 	$user = Auth::user();
-	return view("broadcasting", array("user"=>$user));
+	$common_chat = DB::table('common_chats AS cc')->select("cc.id", "cc.content", "cc.regDate", "users.name", "users.profile_src")->join("users","cc.id", "users.id")->get();
+	return view("broadcasting", array("user"=>$user, "common_chat"=>$common_chat));
 })->middleware('auth');
 
 
