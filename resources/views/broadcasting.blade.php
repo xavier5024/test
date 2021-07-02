@@ -84,8 +84,8 @@
             });
 			function go_broadcasting(){
                 $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
-				var message = $("#message").val();
-
+				let message = $("#message").val();
+				if(!message)return;
                 let message_html = '<div class="d-flex justify-content-start mb-4 current_my"><div class="img_cont_msg"><img src="'+curruser.profile_src+'" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">'+message+'<span class="msg_time">지금</span></div></div>';
                 $("#chatbox").append(message_html);
 				$("#message").val("");
