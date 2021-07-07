@@ -113,6 +113,10 @@ background-color: rgba(0,0,0,0.3) !important;
     height: 40px;
     width: 40px;
 }
+.upload_img{
+    max-height:150px;
+
+}
 .online_icon{
 position: absolute;
 height: 15px;

@@ -28,8 +28,7 @@ Route::get('/', function () {
 //Route::get('/test', [HomeController::class,'test']);
 
 Route::post('/broadcast', function(Request $request){
-	$user = Auth::user();
-	DB::table('common_chats')->insert(array("id"=>Auth::id(),"content"=>$request->message));
+
 	broadcast(new \App\Events\Hello("common"));
 	return "";
 });

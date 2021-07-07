@@ -6,7 +6,7 @@
 		<!-- CSRF Token -->
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<!-- Scripts -->
-		<script src="{{ asset('js/app.js') }}" defer></script>
+		<!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="{{ mix('js/broadcast.js') }}"></script>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -27,7 +27,6 @@
 				$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
                 window.Echo.join('monitoring.common')
                 .here((users) => {
-					console.log(users);
                     for(var idx=0; idx<users.length; idx++){
                         let userhtml = '<li ';
                         if(curruser.id == users[idx].id){
@@ -74,7 +73,6 @@
 
 				window.Echo.private('App.User.' + curruser.id)
 				.notification((notification) => {
-					console.log(notification);
 					if(notification.result == "clear"){
 						$('#whisper_cnt_'+notification.send_id).text("");
 					}else{
@@ -86,16 +84,22 @@
 			function go_broadcasting(){
                 $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
 				let message = $("#message").val();
-				if(!message)return;
+				let attachments = $("#attachments")[0].files[0];
+				if(!message && !attachments)return;
                 let message_html = '<div class="d-flex justify-content-start mb-4 current_my"><div class="img_cont_msg"><img src="'+curruser.profile_src+'" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">'+message+'<span class="msg_time">지금</span></div></div>';
                 $("#chatbox").append(message_html);
 				$("#message").val("");
-
-				var send_data = "message="+message;
+				$("#attachments")[0].files[0] = null;
+				//var send_data = "message="+message;
+				var jform = new FormData();
+				jform.append('message', message);
+				jform.append('attachments', attachments);
 				$.ajax({ 
 					type: "POST", 
 					url: "/broadcast", 
-					data:  send_data,
+					data:  jform,
+					processData: false,
+            		contentType: false,
 					dataType: 'html',
 					success: function (data) {
 						console.log(data);
@@ -203,8 +207,8 @@
 						<div class="card-footer">
 							<div class="input-group">
 								<div class="input-group-append">
-									<input type="file" style="display:none"/>
-									<span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+									<input type="file" id="attachments" style="display:none" onchange="go_broadcasting()"/>
+									<span class="input-group-text attach_btn"  onClick="$(this).parent().find('#attachments').trigger('click');"><i class="fas fa-paperclip"></i></span>
 								</div>
 								<textarea id="message" name="" class="form-control type_msg" placeholder="Type your message..." onkeyup="javascript:if(event.keyCode==13)go_broadcasting()"></textarea>
 								<div class="input-group-append">
