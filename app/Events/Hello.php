@@ -68,8 +68,8 @@ class Hello implements ShouldBroadcast
           if ($file_result) {
               if (preg_match("/\.(gif|jpg|jpeg|png)$/i", $ext)) {
                   //이미지확장자
-                  $insert_arr["content"] .= "<img class='upload_img' src='/data/".$path."/".$physical_name."'/>";
-                  $data["message"] .= "<img class='upload_img' src='/data/".$path."/".$physical_name."'/>";
+                  $insert_arr["content"] .= "<a href='/data".$path."/".$physical_name."'><img class='upload_img' src='/data/".$path."/".$physical_name."'/></a>";
+                  $data["message"] .= "<a href='/data".$path."/".$physical_name."'><img class='upload_img' src='/data/".$path."/".$physical_name."'/></a>";
               } else {
                   $insert_arr["content"] .= "<a href='/data".$path."/".$physical_name."'><button type='button' class='btn btn-primary'>".$logical_name."</button></a>";
                   $data["message"] .= "<a href='/data".$path."/".$physical_name."'><button type='button' class='btn btn-primary'>".$logical_name."</button></a>";

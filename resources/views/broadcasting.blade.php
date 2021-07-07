@@ -63,8 +63,8 @@
                     let ifmessage = (curruser.id == data.user.id) ? "msg_cotainer" : "msg_cotainer_send";
                     let message_html = '<div class="d-flex justify-content-'+wheremy+' mb-4"><div class="img_cont_msg"><img src="'+data.user.profile_src+'" class="rounded-circle user_img_msg"></div><div class="'+ifmessage+'">'+data.data.message+'<span class="msg_time">지금</span></div></div>';
                     $("#chatbox").append(message_html);
-                    $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
                     $(".current_my").remove();
+					setTimeout(function() {$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);}, 100);
                 })
                 .leaving((user) => {
                     //console.log(user.name);
@@ -80,6 +80,24 @@
 						$('#whisper_cnt_'+notification.send_id).show();
 					}
 				});
+
+
+				$("#chatbox").on("dragenter", function(e) { //드래그 요소가 들어왔을떄
+					$(this).addClass('drag-over');
+				}).on("dragleave", function(e) { //드래그 요소가 나갔을때
+					$(this).removeClass('drag-over');
+				}).on("dragover", function(e) {
+					e.stopPropagation();
+					e.preventDefault();
+				}).on('drop', function(e) { //드래그한 항목을 떨어뜨렸을때
+					e.preventDefault();
+					$(this).removeClass('drag-over');
+					if(e.originalEvent.dataTransfer.files.length > 0){
+						$("#attachments").prop("files", e.originalEvent.dataTransfer.files);
+						go_broadcasting();
+					}
+				});
+
             });
 			function go_broadcasting(){
                 $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
